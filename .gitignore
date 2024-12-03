@@ -1,0 +1,20 @@
+# Exclude virtual environment folder
+venv/
+# If using other common virtual environment names
+.env/
+.envrc
+*.env
+
+# Exclude system-specific files
+.DS_Store  # macOS
+Thumbs.db  # Windows
+
+# Exclude Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Exclude IDE-specific files
+.idea/  # PyCharm
+.vscode/  # VS Code
+*.iml  # IntelliJ
