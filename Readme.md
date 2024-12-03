@@ -6,11 +6,7 @@ https://python.langchain.com/docs/how_to/
 
 ### Step to run:
 1. Installation https://dev.to/ajmal_hasan/setting-up-a-conda-environment-for-your-python-projects-251d
-2. `conda create -p venv python==3.10 -y` (if `venv` folder doesnt exist)
-3. `conda activate`  * (to activate environment)
-4. `pip install -r requirements.txt` (if dependencies not installed)
-5. `streamlit run app.py` * (to run in web, particular python file)
-6. For test we can check in LangSmith dashboard (https://smith.langchain.com/)
+2. For test we can check in LangSmith dashboard (https://smith.langchain.com/)
 
 ------------
 
