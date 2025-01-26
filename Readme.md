@@ -1,5 +1,4 @@
 Follow:
-https://www.youtube.com/watch?v=swCPic00c30
 
 https://python.langchain.com/docs/how_to/
 
