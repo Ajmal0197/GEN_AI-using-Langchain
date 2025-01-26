@@ -73,14 +73,32 @@ if input_prompt:
         for i, doc in enumerate(response["context"]):
             st.write(doc.page_content)
             st.write("--------------------------------")
+            
+# This code implements a **Streamlit application** that integrates with **LLM models** (Llama3 via ChatGroq) and **ObjectBox vector database** for document retrieval and question-answering. Here's a summary of its functionality:
 
+# 1. **Environment Setup**:
+#    - Loads API keys for Groq and OpenAI from environment variables using `dotenv`.
 
+# 2. **LLM and Prompt Configuration**:
+#    - Uses `ChatGroq` (Llama3 model) for answering questions.
+#    - Defines a prompt template to instruct the model to provide answers based on specific context.
 
+# 3. **Document Embedding and Vector Store**:
+#    - Uses `OpenAIEmbeddings` to create vector embeddings for documents.
+#    - Loads PDF files from a directory (`./us_census`) using `PyPDFDirectoryLoader`.
+#    - Splits the documents into smaller chunks using `RecursiveCharacterTextSplitter`.
+#    - Stores the processed document embeddings in an ObjectBox vector database.
 
+# 4. **User Interaction**:
+#    - A text input allows users to ask questions about the documents.
+#    - A button triggers the document embedding process and initializes the ObjectBox database.
 
+# 5. **Retrieval and Response**:
+#    - Creates a retrieval chain to fetch relevant document chunks from the database.
+#    - Sends the context and question to the LLM for generating answers.
+#    - Displays the response along with document snippets (relevant chunks) in the UI.
 
-
-
-
-
-
+# ### Key Features:
+# - Efficient document retrieval using vector embeddings.
+# - Seamless integration of LLM for accurate question-answering.
+# - Interactive UI for embedding, querying, and viewing relevant document content.

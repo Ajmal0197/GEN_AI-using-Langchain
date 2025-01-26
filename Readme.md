@@ -10,33 +10,105 @@ https://python.langchain.com/docs/how_to/
 
 ------------
 
-Theory:
+Here’s an example that demonstrates the **Ingestion** and **Generation** phases using LangChain:
+
+---
+
+### **Example Use Case**: Building a Q&A system for a PDF research paper.
+
+---
 
 ### **Ingestion: Preparing the Document**
 
-1. **Loading the Document**: Initially, the document is loaded into the system.  
-   *LangChain Concept Used*: **Document Loaders** (e.g., `WebBaseLoader`, `PDFLoader`, etc.)
+1. **Loading the Document**  
+   Load a PDF research paper into the system.  
+   ```python
+   from langchain.document_loaders import PyPDFLoader
+   
+   # Load the PDF
+   loader = PyPDFLoader("research_paper.pdf")
+   documents = loader.load()
+   print(f"Loaded {len(documents)} pages from the document.")
+   ```
 
-2. **Splitting the Document**: Large documents are divided into smaller, manageable chunks.  
-   *LangChain Concept Used*: **Text Splitters** (e.g., `RecursiveCharacterTextSplitter`)
+2. **Splitting the Document**  
+   Divide the document into smaller chunks for processing.  
+   ```python
+   from langchain.text_splitter import RecursiveCharacterTextSplitter
+   
+   # Split the document into chunks
+   text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+   chunks = text_splitter.split_documents(documents)
+   print(f"Split document into {len(chunks)} chunks.")
+   ```
 
-3. **Creating Embeddings**: Each chunk is converted into vector embeddings representing the document's content in a high-dimensional space.  
-   *LangChain Concept Used*: **Embeddings** (e.g., `OpenAIEmbeddings`, `HuggingFaceEmbeddings`)
+3. **Creating Embeddings**  
+   Convert the chunks into vector embeddings.  
+   ```python
+   from langchain.embeddings import OpenAIEmbeddings
+   
+   # Generate embeddings
+   embeddings = OpenAIEmbeddings()
+   chunk_embeddings = [embeddings.embed_document(chunk) for chunk in chunks]
+   print("Embeddings created for all chunks.")
+   ```
 
-4. **Storing in a Vector Store**: These embeddings are stored in a vector database, making the document searchable.  
-   *LangChain Concept Used*: **Vector Stores** (e.g., `FAISS`, `Pinecone`, `Weaviate`)
+4. **Storing in a Vector Store**  
+   Store these embeddings in a vector database for retrieval.  
+   ```python
+   from langchain.vectorstores import FAISS
+   
+   # Save embeddings in FAISS
+   vector_store = FAISS.from_documents(chunks, embeddings)
+   print("Embeddings stored in FAISS vector database.")
+   ```
 
 ---
 
 ### **Generation: Answering the Question**
 
-1. **Accepts a User's Question**: The system takes in queries from users.  
-   *LangChain Concept Used*: **Retrievers** (e.g., `VectorStoreRetriever`)
+1. **Accepts a User's Question**  
+   Take a question from the user.  
+   ```python
+   user_query = "What are the main findings of the research?"
+   ```
 
-2. **Finds Relevant Content**: It identifies the most relevant section(s) of the document based on the query.  
-   *LangChain Concept Used*: **Retrievers and Chains** (e.g., `RetrievalQAChain`)
+2. **Finds Relevant Content**  
+   Use the vector database to retrieve the most relevant chunks for the query.  
+   ```python
+   from langchain.chains import RetrievalQAChain
+   from langchain.llms import OpenAI
+   
+   # Set up retriever
+   retriever = vector_store.as_retriever(search_type="similarity", search_kwargs={"k":3})
+   
+   # Use a QA chain to retrieve relevant content
+   llm = OpenAI(model="text-davinci-003")
+   qa_chain = RetrievalQAChain.from_chain_type(llm=llm, retriever=retriever)
+   ```
 
-3. **Generates an Answer**: Using the LLM, the system generates a precise answer to the user's question based on the identified document section.  
-   *LangChain Concept Used*: **LLMs and Chains** (e.g., `OpenAI`, `ConversationalRetrievalChain`)  
+3. **Generates an Answer**  
+   Generate the answer based on the retrieved content.  
+   ```python
+   answer = qa_chain.run(user_query)
+   print(f"Answer: {answer}")
+   ```
 
-LangChain provides seamless integration of these concepts to manage both ingestion and generation phases effectively.
+---
+
+### **Output Walkthrough**
+
+- **Loading**: The PDF is loaded into the system as `documents`.
+- **Splitting**: The PDF is split into manageable chunks with overlapping sections for context.
+- **Embedding**: The chunks are embedded into high-dimensional vectors.
+- **Storage**: The embeddings are stored in FAISS, making them searchable.
+- **Retrieval**: When a user asks a question, the system retrieves the most relevant chunks.
+- **Answer Generation**: An LLM generates an answer based on the retrieved content.
+
+---
+
+### **Illustrative Result**
+**User Question**: "What are the main findings of the research?"  
+**System Answer**: "The research highlights that X intervention improves Y outcomes by Z% according to the data in Table 2."
+
+This demonstrates how LangChain simplifies ingestion and generation phases for creating a scalable, efficient Q&A system.
